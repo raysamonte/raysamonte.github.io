@@ -75,25 +75,88 @@
       return /^[a-zA-Z0-9_-]{11}$/.test(id || '') ? id : null;
     } catch { return null; }
   }
+  function youtubeLink(id) {
+    const link = document.createElement('a');
+    link.href = `https://www.youtube.com/watch?v=${id}`;
+    link.textContent = 'Watch on YouTube ↗';
+    link.className = 'youtube-fallback';
+    link.target = '_blank';
+    link.rel = 'noopener';
+    return link;
+  }
+  function loadYoutube(shell, id, title) {
+    if (!['http:', 'https:'].includes(location.protocol)) {
+      const message = document.createElement('p');
+      message.className = 'video-preview-message';
+      message.textContent = 'To play this video here, open the website through localhost or its published HTTPS address.';
+      shell.replaceChildren(message, youtubeLink(id));
+      return;
+    }
+    const frame = document.createElement('iframe');
+    // Set the policy before navigation. YouTube requires an HTTP Referer.
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.title = title;
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    const source = new URL(`https://www.youtube-nocookie.com/embed/${id}`);
+    source.searchParams.set('autoplay', '1');
+    source.searchParams.set('rel', '0');
+    source.searchParams.set('origin', location.origin);
+    frame.src = source.href;
+    // Stop playback in other YouTube embeds before opening this one.
+    document.querySelectorAll('.video-shell iframe').forEach(other => {
+      const previous = new URL(other.src);
+      previous.searchParams.set('autoplay', '0');
+      other.src = previous.href;
+    });
+    shell.replaceChildren(frame);
+    frame.focus();
+  }
   const videoId = youtubeId(config.youtubeUrl);
   const playButton = $('#play-showreel');
   if (videoId) {
     $('#showreel-note').hidden = true;
     $('#video-helper').textContent = 'Play video · YouTube';
+    $('#showreel-note').after(youtubeLink(videoId));
     playButton.addEventListener('click', () => {
-      const frame = document.createElement('iframe');
-      frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
-      frame.title = 'Portfolio showreel';
-      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      frame.allowFullscreen = true;
-      frame.referrerPolicy = 'strict-origin-when-cross-origin';
-      $('#video-shell').replaceChildren(frame);
-      frame.focus();
+      loadYoutube($('#video-shell'), videoId, 'Portfolio showreel');
     });
   } else {
     playButton.disabled = true;
     playButton.setAttribute('aria-label', 'Showreel coming soon');
   }
+
+  // Each project loads a privacy-enhanced YouTube player only on click.
+  const projects = Array.isArray(config.videos) ? config.videos.filter(project => project && typeof project === 'object') : [];
+  $('#video-empty').hidden = projects.length > 0;
+  projects.forEach(project => {
+    const article = document.createElement('article');
+    article.className = 'video-project';
+    const shell = document.createElement('div');
+    shell.className = 'video-shell project-player';
+    if (safeUrl(project.poster)) {
+      const poster = document.createElement('img');
+      poster.src = project.poster; poster.alt = ''; poster.loading = 'lazy'; poster.width = 800; poster.height = 450;
+      shell.append(poster);
+    }
+    const id = youtubeId(project.youtubeUrl);
+    const cover = document.createElement('div'); cover.className = 'video-cover';
+    const play = document.createElement('button'); play.type = 'button'; play.className = 'play-button';
+    play.textContent = '▶';
+    play.disabled = !id;
+    play.setAttribute('aria-label', id ? `Play ${project.title || 'video project'}` : 'Video coming soon');
+    const helper = document.createElement('span'); helper.className = 'video-helper'; helper.textContent = id ? 'Watch project · YouTube' : 'Video coming soon';
+    cover.append(play, helper); shell.append(cover);
+    if (id) play.addEventListener('click', () => {
+      loadYoutube(shell, id, project.title || 'Video project');
+    });
+    const heading = document.createElement('h3'); heading.textContent = project.title || 'Video project';
+    article.append(shell, heading);
+    if (project.role) { const role = document.createElement('p'); role.className = 'project-role'; role.textContent = project.role; article.append(role); }
+    if (project.description) { const description = document.createElement('p'); description.className = 'project-description'; description.textContent = project.description; article.append(description); }
+    if (id) article.append(youtubeLink(id));
+    $('#video-projects').append(article);
+  });
 
   const photos = (config.photos || []).filter(photo => safeUrl(photo.src));
   const categories = ['All', ...new Set(photos.map(photo => photo.category).filter(Boolean))];

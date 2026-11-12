@@ -1,8 +1,23 @@
 // Edit this file to personalize the website. No build step or server is needed.
 window.PORTFOLIO = {
-  name: 'YOUR NAME',
+  name: 'RAY SAMONTE',
   // Paste a YouTube watch, share, or embed URL. Leave empty until ready.
   youtubeUrl: '',
+  // Individual edited videos appear below the featured showreel.
+  // Add one object per project, for example:
+  // { title: 'Your project title', youtubeUrl: 'https://youtu.be/VIDEO_ID',
+  //   role: 'Video editing · Color grading', description: 'A brief project description.',
+  //   poster: 'assets/your-video-cover.jpg' },
+  // poster is optional. Invalid/empty video URLs display a coming-soon card.
+  videos: [
+    { 
+      title: 'Your project title', 
+      youtubeUrl: 'https://www.youtube.com/watch?v=J1yPfOJxFw0',
+      role: 'Video editing · Color grading', 
+      description: 'A brief project description.',
+      poster: 'assets/architecture.jpg' 
+    }
+  ],
   // Add your PDF to assets/ and set this to e.g. 'assets/resume.pdf'.
   resumeUrl: '',
   email: '',
