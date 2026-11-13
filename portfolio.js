@@ -16,6 +16,13 @@ window.PORTFOLIO = {
       role: 'Video editing · Color grading', 
       description: 'A brief project description.',
       poster: 'assets/architecture.jpg' 
+    },
+    { 
+      title: 'Unlisted', 
+      youtubeUrl: 'https://www.youtube.com/watch?v=9lT-qjTQtmc',
+      role: 'Video editing · Color grading', 
+      description: 'A brief project description.',
+      poster: 'assets/forest.jpg' 
     }
   ],
   // Add your PDF to assets/ and set this to e.g. 'assets/resume.pdf'.
