@@ -2,7 +2,7 @@
 window.PORTFOLIO = {
   name: 'RAY SAMONTE',
   // Paste a YouTube watch, share, or embed URL. Leave empty until ready.
-  youtubeUrl: '',
+  youtubeUrl: 'https://youtu.be/OC58iRKCmwA',
   // Individual edited videos appear below the featured showreel.
   // Add one object per project, for example:
   // { title: 'Your project title', youtubeUrl: 'https://youtu.be/VIDEO_ID',
@@ -26,8 +26,8 @@ window.PORTFOLIO = {
     }
   ],
   // Add your PDF to assets/ and set this to e.g. 'assets/resume.pdf'.
-  resumeUrl: '',
-  email: '',
+  resumeUrl: 'assets/Samonte_Raymharc_CV.pdf',
+  email: 'samonteraymharc@gmail.com',
   linkedinUrl: '',
   // Replace these sample images with your own work and set sample: false.
   // Categories and filter buttons are generated from this list.
